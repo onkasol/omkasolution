@@ -1,0 +1,6 @@
+{
+  "name": "온카솔루션",
+  "description": "럭셔리 블랙 & 퍼플 테마의 온카솔루션 공식 웹사이트로, 로고 디자인 및 광고/PR 서비스를 소개하고 실시간 CMS 및 포트폴리오/블로그 관리자 대시보드를 탑재한 프리미엄 웹사이트입니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

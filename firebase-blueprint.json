@@ -1,0 +1,89 @@
+{
+  "entities": {
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "CMS configurations for Onka Solution website design, texts, and contact details",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Website title" },
+        "subtitle": { "type": "string", "description": "Website subtitle" },
+        "heroTitle": { "type": "string", "description": "Main catching headline in Hero section" },
+        "heroSubtitle": { "type": "string", "description": "Sub-headline in Hero section" },
+        "heroCtaText": { "type": "string", "description": "Hero Call-To-Action button text" },
+        "accentColor": { "type": "string", "description": "Primary accent/point color hex code (default: vibrant purple #a855f7)" },
+        "fontStyle": { "type": "string", "description": "Font family selector: 'sans' | 'serif' | 'mono'" },
+        "email": { "type": "string", "description": "Contact email address" },
+        "phone": { "type": "string", "description": "Contact phone number" },
+        "address": { "type": "string", "description": "Office address" },
+        "kakaoLink": { "type": "string", "description": "KakaoTalk open chat link" },
+        "instagramLink": { "type": "string", "description": "Instagram or social media profile link" }
+      },
+      "required": ["title", "heroTitle", "accentColor"]
+    },
+    "PortfolioItem": {
+      "title": "Portfolio Item",
+      "description": "A single design work display item in the creative gallery",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "description": "Title of the client brand / project" },
+        "category": { "type": "string", "description": "Project category: '로고 디자인' | '광고/PR' | '종합 브랜딩'" },
+        "clientName": { "type": "string", "description": "Names of client company" },
+        "description": { "type": "string", "description": "Detailed description of the style, work process and solution" },
+        "imageUrl": { "type": "string", "description": "URL or design spec image description" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of creation" }
+      },
+      "required": ["id", "title", "category", "description", "imageUrl"]
+    },
+    "BlogPost": {
+      "title": "Blog Post",
+      "description": "Latest company news, brand notice, or industry design trend article",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "description": "Post title" },
+        "category": { "type": "string", "description": "Category: '공지사항' | '디자인 트렌드' | '홍보 칼럼'" },
+        "author": { "type": "string", "description": "Post author" },
+        "content": { "type": "string", "description": "Rich content or body of the post" },
+        "summary": { "type": "string", "description": "Brief one-line summary of the post" },
+        "imageUrl": { "type": "string", "description": "Thumbnail image representation" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of creation" }
+      },
+      "required": ["id", "title", "category", "content", "summary"]
+    },
+    "ContactInquiry": {
+      "title": "Contact Inquiry",
+      "description": "Messages submitted from the website's Contact Us form",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "description": "Sender name" },
+        "email": { "type": "string", "description": "Sender email" },
+        "phone": { "type": "string", "description": "Sender phone number" },
+        "serviceCategory": { "type": "string", "description": "Requested service: 로고 디자인 | 광고/PR | 기타 문의" },
+        "message": { "type": "string", "description": "Detailed inquiry message details" },
+        "status": { "type": "string", "description": "Status: unread | read | replied" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of submission" }
+      },
+      "required": ["id", "name", "email", "phone", "message", "status"]
+    }
+  },
+  "firestore": {
+    "settings": {
+      "schema": "SiteSettings",
+      "description": "Collection containing the single 'site_config' settings document"
+    },
+    "portfolio": {
+      "schema": "PortfolioItem",
+      "description": "Collection for branding and logo design portfolio showcase items"
+    },
+    "blog": {
+      "schema": "BlogPost",
+      "description": "Collection for company notices and copywriting/PR tips blogs"
+    },
+    "inquiries": {
+      "schema": "ContactInquiry",
+      "description": "Collection for user submitted contact and inquiry forms"
+    }
+  }
+}
