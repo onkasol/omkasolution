@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCMS } from '../CMSContext';
 import { loginWithGoogle, logout } from '../firebase';
-import { LayoutDashboard, LogOut, Sparkles, Globe } from 'lucide-react';
+import { LayoutDashboard, LogOut, Gem, Globe } from 'lucide-react';
 
 interface HeaderProps {
   onNavigate: (sectionId: string) => void;
@@ -60,17 +60,17 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
               background: `linear-gradient(135deg, ${settings.accentColor}dd, #12052b)` 
             }}
           >
-            <Sparkles className="w-5 h-5 text-white" />
+            <Gem className="w-5 h-5 text-white animate-pulse" />
             <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity" />
           </div>
           <div className="flex flex-col">
             <span 
               className={`text-lg font-bold tracking-wider text-white ${getFontClass()}`}
             >
-              온카솔루션
+              루비솔루션
             </span>
             <span className="text-[10px] text-gray-400 font-mono tracking-widest uppercase">
-              {settings.subtitle || 'ONKA SOLUTION'}
+              {settings.subtitle || 'RUBY SOLUTION'}
             </span>
           </div>
         </div>

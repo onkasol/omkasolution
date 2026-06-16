@@ -43,11 +43,11 @@ export const BlogSection: React.FC = () => {
               {settings.blogSubtitle || "INSIGHTS & NOTICES"}
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight whitespace-pre-line leading-tight">
-              {settings.blogTitle || "온카 디자인 트렌드 & 칼럼"}
+              {settings.blogTitle || "루비 디자인 트렌드 & 칼럼"}
             </h2>
           </div>
           <p className="text-gray-400 text-sm max-w-sm mt-4 md:mt-0 leading-relaxed whitespace-pre-line">
-            {settings.blogDesc || "로고 디자인 마켓의 핵심 인사이트와 효과적인 마케팅 PR 전략 및 온카솔루션의 새로운 공지사항을 연재합니다."}
+            {settings.blogDesc || "로고 디자인 마켓의 핵심 인사이트와 효과적인 마케팅 PR 전략 및 루비솔루션의 새로운 공지사항을 연재합니다."}
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export const BlogSection: React.FC = () => {
                   <div className="flex items-center space-x-3 text-[10px] font-mono text-gray-500 mb-3.5">
                     <div className="flex items-center space-x-1">
                       <User className="w-3 h-3" />
-                      <span>{post.author || '온카 기획'}</span>
+                      <span>{post.author || '루비 기획'}</span>
                     </div>
                   </div>
 
@@ -169,7 +169,7 @@ export const BlogSection: React.FC = () => {
                 <div className="flex items-center space-x-6 text-xs text-gray-500 font-mono border-b border-white/5 pb-4 mb-6">
                   <div className="flex items-center space-x-1.5">
                     <User className="w-3.5 h-3.5 text-gray-600" />
-                    <span>작성자: {selectedPost.author || '온카 기획'}</span>
+                    <span>작성자: {selectedPost.author || '루비 기획'}</span>
                   </div>
                 </div>
 

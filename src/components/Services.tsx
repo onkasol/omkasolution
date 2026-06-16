@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCMS } from '../CMSContext';
-import { Paintbrush, MessageSquare, Compass, BarChart4, ChevronRight, Laptop, Sparkles, BookOpen } from 'lucide-react';
+import { Paintbrush, MessageSquare, Compass, BarChart4, ChevronRight, Laptop, Gem, BookOpen } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const Services: React.FC = () => {
@@ -11,7 +11,7 @@ export const Services: React.FC = () => {
       title: "Premium Logo Design",
       koreanTitle: settings.service1Title || "프리미엄 로고 디자인 & 브랜딩",
       icon: Paintbrush,
-      description: settings.service1Desc || "브랜드가 가진 단 하나의 철학을 정교하고 럭셔리하게 시각화합니다. 온카솔루션의 로고 디자인은 단순 기호 축소를 넘어, 수십 년 간 지속될 가치를 창조합니다.",
+      description: settings.service1Desc || "브랜드가 가진 단 하나의 철학을 정교하고 럭셔리하게 시각화합니다. 루비솔루션의 로고 디자인은 단순 기호 축소를 넘어, 수십 년 간 지속될 가치를 창조합니다.",
       deliverables: (settings.service1Deliverables || "워드마크, 그래픽 심볼, 시그니처 콤비네이션 설계\n풀 패키지 브랜딩 가이드북 (색상, 서체, 비율 규칙 구성)\nBI 어플리케이션 시스템 (비즈니스 서식류, 명함, 봉투 구성)\n독점적 지적재산 특허상표 사전 출원 검토 및 정밀 가이드").split('\n').filter(Boolean),
       tag: settings.service1Tag || "LOGO & BRANDING"
     },
@@ -43,7 +43,7 @@ export const Services: React.FC = () => {
               {settings.servicesSubtitle || 'OUR EXPERTISE'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white whitespace-pre-line leading-tight">
-              {settings.servicesTitle || "온카솔루션의 독보적인\n크리에이티브 대행 설계"}
+              {settings.servicesTitle || "루비솔루션의 독보적인\n크리에이티브 대행 설계"}
             </h2>
           </div>
           <p className="text-gray-400 text-sm sm:text-base max-w-sm leading-relaxed whitespace-pre-line">
@@ -128,7 +128,7 @@ export const Services: React.FC = () => {
             </div>
           </div>
           <div className="flex items-start space-x-3">
-            <Sparkles className="w-5 h-5 text-gray-500 mt-0.5" style={{ color: settings.accentColor }} />
+            <Gem className="w-5 h-5 text-gray-500 mt-0.5" style={{ color: settings.accentColor }} />
             <div>
               <h5 className="text-sm font-semibold text-white">{settings.highlight2Title || "시각 검증 및 수정 프리패스"}</h5>
               <p className="text-xs text-gray-400 leading-relaxed mt-1">

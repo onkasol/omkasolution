@@ -24,7 +24,7 @@ export const PortfolioList: React.FC = () => {
             {settings.portfolioTitle || "가치를 직관으로 교체하는 작품들"}
           </h2>
           <p className="text-gray-400 text-sm sm:text-base max-w-xl leading-relaxed whitespace-pre-line">
-            {settings.portfolioDesc || "미적 아름다움은 기본입니다. 온카솔루션의 비주얼 포트폴리오는 비즈니스 돌파의 핵심 단서와 감동적 일체감을 자극합니다."}
+            {settings.portfolioDesc || "미적 아름다움은 기본입니다. 루비솔루션의 비주얼 포트폴리오는 비즈니스 돌파의 핵심 단서와 감동적 일체감을 자극합니다."}
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export const PortfolioList: React.FC = () => {
                   </div>
                   
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5 text-[11px] text-gray-500 font-mono">
-                    <span>{item.clientName || '온카 파트너스'}</span>
+                    <span>{item.clientName || '루비 파트너스'}</span>
                     <ArrowUpRight className="w-3.5 h-3.5 text-gray-600 group-hover:text-white transition-colors" />
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export const PortfolioList: React.FC = () => {
                   <div className="grid grid-cols-1 gap-4 mb-6">
                     <div className="flex items-center space-x-2 text-xs font-mono text-gray-400">
                       <User className="w-3.5 h-3.5 text-gray-500" />
-                      <span>고객사: {selectedItem.clientName || '온카 프렌즈'}</span>
+                      <span>고객사: {selectedItem.clientName || '루비 프렌즈'}</span>
                     </div>
                   </div>
 

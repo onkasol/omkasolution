@@ -90,12 +90,12 @@ export const loginWithGoogle = async () => {
     // Simulated auth state for local mock fallback
     const mockUser = {
       uid: 'mock_admin_uid_123',
-      email: 'admin@onka.solution',
-      displayName: '온카 관리자',
+      email: 'admin@ruby.solution',
+      displayName: '루비 관리자',
       photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop',
       emailVerified: true
     };
-    localStorage.setItem('onka_mock_user', JSON.stringify(mockUser));
+    localStorage.setItem('ruby_mock_user', JSON.stringify(mockUser));
     return mockUser;
   }
   
@@ -111,7 +111,7 @@ export const loginWithGoogle = async () => {
 
 export const logout = async () => {
   if (!isRealFirebase || !auth) {
-    localStorage.removeItem('onka_mock_user');
+    localStorage.removeItem('ruby_mock_user');
     return;
   }
   try {

@@ -14,7 +14,7 @@ import {
   ExternalLink,
   BookOpen,
   Calendar,
-  Sparkles,
+  Gem,
   RefreshCw,
   Eye,
   Check,
@@ -113,7 +113,7 @@ export const AdminDashboard: React.FC = () => {
     const payload = {
       id: pId,
       title: pTitle,
-      clientName: pClient || '온카솔루션 파트너스',
+      clientName: pClient || '루비솔루션 파트너스',
       category: pCategory,
       description: pDesc,
       imageUrl: pImageUrl
@@ -144,7 +144,7 @@ export const AdminDashboard: React.FC = () => {
     setEditingBlog(null);
     setBId('blog-' + Math.random().toString(36).substr(2, 5));
     setBTitle('');
-    setBAuthor(currentUser?.displayName || '온카 기획실');
+    setBAuthor(currentUser?.displayName || '루비 기획실');
     setBCategory('디자인 트렌드');
     setBSummary('');
     setBContent('');
@@ -162,7 +162,7 @@ export const AdminDashboard: React.FC = () => {
     const payload = {
       id: bId,
       title: bTitle,
-      author: bAuthor || '온카 기획실',
+      author: bAuthor || '루비 기획실',
       category: bCategory,
       summary: bSummary,
       content: bContent,
@@ -229,7 +229,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/10 pb-8 gap-4">
           <div>
             <h1 className="text-3xl font-black tracking-tight flex items-center space-x-2">
-              <span>Onka Real-Time CMS</span>
+              <span>RubySolution Real-Time CMS</span>
               <span className="text-xs uppercase px-2.5 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-400 font-mono rounded-full animate-pulse">
                 ADMIN CONSOLE
               </span>
@@ -248,7 +248,7 @@ export const AdminDashboard: React.FC = () => {
               <span>기본 테마 데이터 리셋</span>
             </button>
             <div className="hidden sm:block text-right">
-              <span className="text-xs text-gray-400 block font-medium">{currentUser?.email || 'admin@onka.solution'}</span>
+              <span className="text-xs text-gray-400 block font-medium">{currentUser?.email || 'admin@ruby.solution'}</span>
               <span className="text-[10px] text-gray-500 font-mono">가상 권한: 최고 관리자</span>
             </div>
           </div>
@@ -315,8 +315,8 @@ export const AdminDashboard: React.FC = () => {
               activeTab === 'ai-helper' ? 'bg-purple-900/45 text-purple-300 border-purple-500' : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            <span>온카 AI 로고 브레인스토머</span>
+            <Gem className="w-4 h-4 text-purple-400" />
+            <span>루비 AI 로고 브레인스토머</span>
           </button>
         </div>
 
@@ -517,24 +517,24 @@ export const AdminDashboard: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-2">
                     <div className="flex flex-col">
-                      <label className="text-xs text-gray-400 font-semibold mb-2">대표자 명시정보 (예: 온카솔루션)</label>
+                      <label className="text-xs text-gray-400 font-semibold mb-2">대표자 명시정보 (예: 루비솔루션)</label>
                       <input 
                         type="text" 
                         value={formSettings.representative || ''}
                         onChange={(e) => setFormSettings({ ...formSettings, representative: e.target.value })}
                         className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-sky-500"
-                        placeholder="온카솔루션"
+                        placeholder="루비솔루션"
                       />
                     </div>
 
                     <div className="flex flex-col">
-                      <label className="text-xs text-gray-400 font-semibold mb-2">하단 온카솔루션 소개 문구 (줄바꿈 가능)</label>
+                      <label className="text-xs text-gray-400 font-semibold mb-2">하단 루비솔루션 소개 문구 (줄바꿈 가능)</label>
                       <textarea 
                         rows={3}
                         value={formSettings.footerDesc || ''}
                         onChange={(e) => setFormSettings({ ...formSettings, footerDesc: e.target.value })}
                         className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-sky-500 resize-none leading-relaxed"
-                        placeholder="온카솔루션은 아너링크, 씨맥스, 스윅스..."
+                        placeholder="루비솔루션은 아너링크, 씨맥스, 스윅스..."
                       />
                     </div>
                   </div>
@@ -575,7 +575,7 @@ export const AdminDashboard: React.FC = () => {
                         value={formSettings.servicesTitle || ''}
                         onChange={(e) => setFormSettings({ ...formSettings, servicesTitle: e.target.value })}
                         className="bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-sky-500 resize-none leading-relaxed"
-                        placeholder="온카솔루션의 독보적인&#13;&#10;크리에이티브 대행 설계"
+                        placeholder="루비솔루션의 독보적인&#13;&#10;크리에이티브 대행 설계"
                       />
                     </div>
 
@@ -959,7 +959,7 @@ export const AdminDashboard: React.FC = () => {
                       value={formSettings.blogTitle || ''}
                       onChange={(e) => setFormSettings({ ...formSettings, blogTitle: e.target.value })}
                       className="bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-sky-500 resize-none leading-relaxed"
-                      placeholder="온카 디자인 트렌드 & 칼럼"
+                      placeholder="루비 디자인 트렌드 & 칼럼"
                     />
                   </div>
 
@@ -1126,10 +1126,10 @@ export const AdminDashboard: React.FC = () => {
             <div className="space-y-6">
               <div className="border-b border-white/5 pb-4">
                 <h3 className="text-lg font-bold flex items-center space-x-2">
-                  <Sparkles className="w-5 h-5 text-purple-400" />
-                  <span>온카 AI 로고 & PR 브레인스토머 (Google Gemini)</span>
+                  <Gem className="w-5 h-5 text-purple-400" />
+                  <span>루비 AI 로고 & PR 브레인스토머 (Google Gemini)</span>
                 </h3>
-                <p className="text-xs text-gray-500 mt-1">가상의 클라이언트 정보와 무드를 기재하면 온카 AI 특화엔진이 어울리는 브랜드 비전과 심볼 구상, 기획 카피를 창의적으로 추천배송합니다.</p>
+                <p className="text-xs text-gray-500 mt-1">가상의 클라이언트 정보와 무드를 기재하면 루비 AI 특화엔진이 어울리는 브랜드 비전과 심볼 구상, 기획 카피를 창의적으로 추천배송합니다.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
@@ -1169,7 +1169,7 @@ export const AdminDashboard: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-3.5 h-3.5" />
+                        <Gem className="w-3.5 h-3.5" />
                         <span>AI 로고 시나리오 제안받기</span>
                       </>
                     )}
@@ -1215,10 +1215,10 @@ export const AdminDashboard: React.FC = () => {
                     </motion.div>
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-gray-500 space-y-2">
-                      <Sparkles className="w-8 h-8 text-zinc-700 animate-pulse" />
+                      <Gem className="w-8 h-8 text-zinc-700 animate-pulse" />
                       <div>
                         <p className="text-xs sm:text-sm font-semibold">입력한 세그먼트에 맞는 AI 콘셉트 가이딩이 출력됩니다.</p>
-                        <p className="text-[10px] text-gray-600 mt-1">온카솔루션의 감각을 배팅해 브랜드를 즉시 브레인스톰 시뮬레이트 하세요.</p>
+                        <p className="text-[10px] text-gray-600 mt-1">루비솔루션의 감각을 배팅해 브랜드를 즉시 브레인스톰 시뮬레이트 하세요.</p>
                       </div>
                     </div>
                   )}
@@ -1301,7 +1301,7 @@ export const AdminDashboard: React.FC = () => {
                         value={formSettings.footerTitle || ''}
                         onChange={(e) => setFormSettings({ ...formSettings, footerTitle: e.target.value })}
                         className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-purple-500 text-white"
-                        placeholder="온카솔루션"
+                        placeholder="루비솔루션"
                       />
                     </div>
                     <div className="flex flex-col">
@@ -1312,20 +1312,20 @@ export const AdminDashboard: React.FC = () => {
                         value={formSettings.representative || ''}
                         onChange={(e) => setFormSettings({ ...formSettings, representative: e.target.value })}
                         className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-purple-500 text-white"
-                        placeholder="온카솔루션"
+                        placeholder="루비솔루션"
                       />
                     </div>
                   </div>
 
                   <div className="flex flex-col">
-                    <label className="text-xs text-gray-400 font-semibold mb-2">하단 온카솔루션 소개 문구 (줄바꿈 가능) *</label>
+                    <label className="text-xs text-gray-400 font-semibold mb-2">하단 루비솔루션 소개 문구 (줄바꿈 가능) *</label>
                     <textarea 
                       rows={6}
                       required
                       value={formSettings.footerDesc || ''}
                       onChange={(e) => setFormSettings({ ...formSettings, footerDesc: e.target.value })}
                       className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-purple-500 text-white resize-y leading-relaxed"
-                      placeholder="온카솔루션 관련 소개 및 정식 계약 등..."
+                      placeholder="루비솔루션 관련 소개 및 정식 계약 등..."
                     />
                   </div>
 
@@ -1348,7 +1348,7 @@ export const AdminDashboard: React.FC = () => {
                         value={formSettings.email || ''}
                         onChange={(e) => setFormSettings({ ...formSettings, email: e.target.value })}
                         className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-purple-500 text-white font-mono"
-                        placeholder="contact@onka.solution"
+                        placeholder="contact@ruby.solution"
                       />
                     </div>
                   </div>
@@ -1409,9 +1409,9 @@ export const AdminDashboard: React.FC = () => {
 
                     <div className="flex items-center space-x-2 pt-2 border-t border-white/5">
                       <div className="w-6 h-6 rounded-md bg-purple-600/30 flex items-center justify-center">
-                        <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                        <Gem className="w-3.5 h-3.5 text-purple-400" />
                       </div>
-                      <span className="text-xs font-bold text-white">{formSettings.footerTitle || "온카솔루션"}</span>
+                      <span className="text-xs font-bold text-white">{formSettings.footerTitle || "루비솔루션(RubySolution)"}</span>
                     </div>
 
                     <p className="text-[10px] text-gray-400 leading-relaxed whitespace-pre-line border-l-2 border-purple-500/50 pl-2">
@@ -1594,7 +1594,7 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="flex flex-col">
                   <label className="text-xs text-gray-400 mb-1 font-semibold">원고 기획/저자</label>
-                  <input type="text" value={bAuthor} onChange={(e) => setBAuthor(e.target.value)} placeholder="온카 디자인 기획팀" className="bg-black border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white" />
+                  <input type="text" value={bAuthor} onChange={(e) => setBAuthor(e.target.value)} placeholder="루비 디자인 기획팀" className="bg-black border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white" />
                 </div>
 
                 <div className="flex flex-col space-y-2">

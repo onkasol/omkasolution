@@ -96,7 +96,7 @@ export const ContactForm: React.FC = () => {
             {settings.contactTitle || '새로운 성공의 궤적을 그리다'}
           </h2>
           <p className="text-gray-400 text-sm sm:text-base max-w-xl leading-relaxed whitespace-pre-line">
-            {settings.contactDesc || '로고 디자인부터 타겟 맞춤 광고 매체 PR 대행까지, 온카솔루션의 디자인 사단과 마케팅 연구소가 동행할 프로젝트에 대한 의뢰를 접수합니다.'}
+            {settings.contactDesc || '로고 디자인부터 타겟 맞춤 광고 매체 PR 대행까지, 루비솔루션의 디자인 사단과 마케팅 연구소가 동행할 프로젝트에 대한 의뢰를 접수합니다.'}
           </p>
         </div>
 
@@ -119,8 +119,8 @@ export const ContactForm: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-[10px] text-gray-500 font-mono block uppercase">EMAIL</span>
-                  <a href={`mailto:${settings.email || 'contact@onka.solution'}`} className="text-sm font-semibold text-gray-200 hover:text-white hover:underline transition-colors block">
-                    {settings.email || 'contact@onka.solution'}
+                  <a href={`mailto:${settings.email || 'contact@ruby.solution'}`} className="text-sm font-semibold text-gray-200 hover:text-white hover:underline transition-colors block">
+                    {settings.email || 'contact@ruby.solution'}
                   </a>
                 </div>
               </div>
@@ -177,13 +177,13 @@ export const ContactForm: React.FC = () => {
               </div>
 
               <a 
-                href={settings.telegramLink || "https://t.me/onka_solution"}
+                href={settings.telegramLink || "https://t.me/ruby_solution"}
                 target="_blank" 
                 rel="noreferrer"
                 className="mt-6 w-full py-3.5 bg-gradient-to-r from-[#24A1DE] to-[#2AABEE] text-white text-xs font-black rounded-xl transition-all shadow-[0_0_20px_rgba(36,161,222,0.3)] hover:scale-[1.02] active:scale-95 duration-200 flex items-center justify-center space-x-1.5 cursor-pointer"
                 id="telegram-btn"
               >
-                <span>온카 텔레그램 문의하기</span>
+                <span>루비 텔레그램 문의하기</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -312,12 +312,12 @@ export const ContactForm: React.FC = () => {
                     ) : (
                       <span className="flex items-center justify-center space-x-2">
                         <Send className="w-4 h-4" />
-                        <span>온카 크리에이티브 파트너 제안 접수</span>
+                        <span>루비 크리에이티브 파트너 제안 접수</span>
                       </span>
                     )}
                   </button>
                   <p className="text-center text-[10px] text-gray-500 font-mono">
-                    본 접수서는 암호화된 통신 보안 로직을 거쳐 안전하게 온카 대표 단말기로 자동 보고됩니다.
+                    본 접수서는 암호화된 통신 보안 로직을 거쳐 안전하게 루비 대표 단말기로 자동 보고됩니다.
                   </p>
                 </motion.form>
               ) : (
@@ -332,7 +332,7 @@ export const ContactForm: React.FC = () => {
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-white">성공적으로 접수되었습니다.</h3>
                     <p className="text-sm text-gray-400 max-w-md mx-auto">
-                      감사합니다. 귀사의 미래 가치를 빛낼 최상급 솔루션을 기획하기 위해 온카 전담 디렉터가 24시간 내에 회신 연락 메일을 송신해 올리겠습니다.
+                      감사합니다. 귀사의 미래 가치를 빛낼 최상급 솔루션을 기획하기 위해 루비 전담 디렉터가 24시간 내에 회신 연락 메일을 송신해 올리겠습니다.
                     </p>
                   </div>
 

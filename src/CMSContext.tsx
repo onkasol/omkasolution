@@ -60,7 +60,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
     } else {
       // Mock auth recovery
-      const localUser = localStorage.getItem('onka_mock_user');
+      const localUser = localStorage.getItem('ruby_mock_user');
       if (localUser) {
         setCurrentUser(JSON.parse(localUser));
       }
@@ -87,7 +87,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               ...loaded,
               accentColor: loaded.accentColor === '#a855f7' ? '#00a2ff' : loaded.accentColor,
               heroCtaText: loaded.heroCtaText === '프로젝트 의뢰하기' ? '텔레그램 문의하기' : loaded.heroCtaText,
-              telegramLink: loaded.telegramLink || 'https://t.me/onka_solution',
+              telegramLink: loaded.telegramLink || 'https://t.me/ruby_solution',
               footerDesc: loaded.footerDesc || defaultSettings.footerDesc,
               footerTitle: loaded.footerTitle || defaultSettings.footerTitle,
               representative: loaded.representative || defaultSettings.representative,
@@ -397,7 +397,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Reset to default CMS presets
   const triggerReset = () => {
-    if (window.confirm('모든 데이터를 최초의 웅장한 온카솔루션 기본 테마 데이터로 온전히 복구하시겠습니까? (이 작업은 되돌릴 수 없습니다)')) {
+    if (window.confirm('모든 데이터를 최초의 웅장한 루비솔루션 기본 테마 데이터로 온전히 복구하시겠습니까? (이 작업은 되돌릴 수 없습니다)')) {
       if (isRealFirebase && db) {
         // Real cloud write
         setDoc(doc(db, 'settings', 'site_config'), defaultSettings)
@@ -415,7 +415,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setPortfolio(defaultPortfolio);
         setBlog(defaultBlog);
         setInquiries(defaultInquiries);
-        alert('로컬 가상 스토리지의 온카 테마 데이터가 즉시 초기화되었습니다!');
+        alert('로컬 가상 스토리지의 루비 테마 데이터가 즉시 초기화되었습니다!');
       }
     }
   };

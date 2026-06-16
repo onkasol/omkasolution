@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCMS } from '../CMSContext';
-import { Sparkles, ArrowDown, Shield, Award, Users } from 'lucide-react';
+import { Gem, ArrowDown, Shield, Award, Users } from 'lucide-react';
 import { motion } from 'motion/react';
 import casinoBgUrl from '../assets/images/casino_background_1781013784535.png';
 
@@ -86,7 +86,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
           transition={{ duration: 0.6 }}
           className="mb-6 flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 backdrop-blur-sm"
         >
-          <Sparkles className="w-3.5 h-3.5" style={{ color: settings.accentColor || '#00a2ff' }} />
+          <Gem className="w-3.5 h-3.5" style={{ color: settings.accentColor || '#e11d48' }} />
           <span className="text-xs uppercase tracking-widest font-mono text-gray-300">
             {settings.subtitle || 'Premium Branding Agency'}
           </span>
@@ -124,7 +124,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
               if (settings.telegramLink) {
                 window.open(settings.telegramLink, '_blank');
               } else {
-                window.open('https://t.me/onka_solution', '_blank');
+                window.open('https://t.me/ruby_solution', '_blank');
               }
             }}
             className="flex items-center justify-center px-10 py-4.5 rounded-full text-base font-bold transition-all relative overflow-hidden group cursor-pointer text-white shadow-[0_0_30px_rgba(0,162,255,0.4)] scale-100 hover:scale-[1.03] active:scale-95 border border-[#24A1DE]/40 bg-gradient-to-r from-[#24A1DE] via-[#2AABEE] to-[#24A1DE] bg-[size:200%_auto] hover:bg-right duration-500"
