@@ -137,15 +137,20 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               contactCategories: loaded.contactCategories || defaultSettings.contactCategories
             };
             setSettings(migrated);
+            localStorage.setItem('onka_cms_settings', JSON.stringify(migrated));
             setDoc(doc(db, 'settings', 'site_config'), migrated)
               .catch(err => console.error('Error writing migrated settings to Firestore:', err));
           } else {
             setSettings(loaded);
+            localStorage.setItem('onka_cms_settings', JSON.stringify(loaded));
           }
         } else {
           // Auto-seed default settings
           setDoc(doc(db, 'settings', 'site_config'), defaultSettings)
-            .then(() => setSettings(defaultSettings))
+            .then(() => {
+              setSettings(defaultSettings);
+              localStorage.setItem('onka_cms_settings', JSON.stringify(defaultSettings));
+            })
             .catch(err => console.error('Error seeding settings:', err));
         }
       }, (error) => {
@@ -165,8 +170,11 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             defaultPortfolio.map(item => setDoc(doc(db, 'portfolio', item.id), item))
           ).catch(err => console.error('Error seeding portfolio:', err));
           setPortfolio(defaultPortfolio);
+          localStorage.setItem('onka_cms_portfolio', JSON.stringify(defaultPortfolio));
         } else {
-          setPortfolio(items.sort((a,b) => b.createdAt.localeCompare(a.createdAt)));
+          const sorted = items.sort((a,b) => b.createdAt.localeCompare(a.createdAt));
+          setPortfolio(sorted);
+          localStorage.setItem('onka_cms_portfolio', JSON.stringify(sorted));
         }
       }, (error) => {
         console.error('Snapshot listen failed on portfolio:', error);
@@ -185,8 +193,11 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             defaultBlog.map(post => setDoc(doc(db, 'blog', post.id), post))
           ).catch(err => console.error('Error seeding blog:', err));
           setBlog(defaultBlog);
+          localStorage.setItem('onka_cms_blog', JSON.stringify(defaultBlog));
         } else {
-          setBlog(items.sort((a,b) => b.createdAt.localeCompare(a.createdAt)));
+          const sorted = items.sort((a,b) => b.createdAt.localeCompare(a.createdAt));
+          setBlog(sorted);
+          localStorage.setItem('onka_cms_blog', JSON.stringify(sorted));
         }
       }, (error) => {
         console.error('Snapshot listen failed on blog:', error);
@@ -198,7 +209,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         snapshot.forEach((snapDoc) => {
           items.push(snapDoc.data() as ContactInquiry);
         });
-        setInquiries(items.sort((a,b) => b.createdAt.localeCompare(a.createdAt)));
+        const sorted = items.sort((a,b) => b.createdAt.localeCompare(a.createdAt));
+        setInquiries(sorted);
+        localStorage.setItem('onka_cms_inquiries', JSON.stringify(sorted));
         setLoading(false);
       }, (error) => {
         console.error('Snapshot listen failed on inquiries:', error);
@@ -254,8 +267,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Update site-wide CMS settings
   const updateSettings = async (newSettings: SiteSettings) => {
-    // Update local state immediately for instant feedback
+    // Update local state and localStorage immediately for instant feedback
     setSettings(newSettings);
+    localStorage.setItem('onka_cms_settings', JSON.stringify(newSettings));
     if (isRealFirebase && db) {
       const path = 'settings/site_config';
       try {
@@ -263,8 +277,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.WRITE, path);
       }
-    } else {
-      localStorage.setItem('onka_cms_settings', JSON.stringify(newSettings));
     }
   };
 
@@ -276,6 +288,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: todayStr
     };
 
+    const updatedList = [newItem, ...portfolio];
+    setPortfolio(updatedList);
+    localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `portfolio/${newItem.id}`;
       try {
@@ -283,15 +299,15 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.CREATE, path);
       }
-    } else {
-      const updatedList = [newItem, ...portfolio];
-      localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
-      setPortfolio(updatedList);
     }
   };
 
   // Update Portfolio Item
   const updatePortfolioItem = async (item: PortfolioItem) => {
+    const updatedList = portfolio.map(i => i.id === item.id ? item : i);
+    setPortfolio(updatedList);
+    localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `portfolio/${item.id}`;
       try {
@@ -299,15 +315,15 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.UPDATE, path);
       }
-    } else {
-      const updatedList = portfolio.map(i => i.id === item.id ? item : i);
-      localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
-      setPortfolio(updatedList);
     }
   };
 
   // Delete Portfolio Item
   const deletePortfolioItem = async (id: string) => {
+    const updatedList = portfolio.filter(i => i.id !== id);
+    setPortfolio(updatedList);
+    localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `portfolio/${id}`;
       try {
@@ -315,10 +331,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.DELETE, path);
       }
-    } else {
-      const updatedList = portfolio.filter(i => i.id !== id);
-      localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
-      setPortfolio(updatedList);
     }
   };
 
@@ -330,6 +342,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: todayStr
     };
 
+    const updatedList = [newPost, ...blog];
+    setBlog(updatedList);
+    localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `blog/${newPost.id}`;
       try {
@@ -337,15 +353,15 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.CREATE, path);
       }
-    } else {
-      const updatedList = [newPost, ...blog];
-      localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
-      setBlog(updatedList);
     }
   };
 
   // Update Blog Post
   const updateBlogPost = async (post: BlogPost) => {
+    const updatedList = blog.map(p => p.id === post.id ? post : p);
+    setBlog(updatedList);
+    localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `blog/${post.id}`;
       try {
@@ -353,15 +369,15 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.UPDATE, path);
       }
-    } else {
-      const updatedList = blog.map(p => p.id === post.id ? post : p);
-      localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
-      setBlog(updatedList);
     }
   };
 
   // Delete Blog Post
   const deleteBlogPost = async (id: string) => {
+    const updatedList = blog.filter(p => p.id !== id);
+    setBlog(updatedList);
+    localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `blog/${id}`;
       try {
@@ -369,10 +385,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.DELETE, path);
       }
-    } else {
-      const updatedList = blog.filter(p => p.id !== id);
-      localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
-      setBlog(updatedList);
     }
   };
 
@@ -386,6 +398,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: new Date().toISOString()
     };
 
+    const updatedList = [newInquiry, ...inquiries];
+    setInquiries(updatedList);
+    localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `inquiries/${newInquiry.id}`;
       try {
@@ -393,10 +409,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.CREATE, path);
       }
-    } else {
-      const updatedList = [newInquiry, ...inquiries];
-      localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
-      setInquiries(updatedList);
     }
   };
 
@@ -406,6 +418,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!found) return;
 
     const updatedInquiry: ContactInquiry = { ...found, status };
+    const updatedList = inquiries.map(i => i.id === id ? updatedInquiry : i);
+    setInquiries(updatedList);
+    localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
 
     if (isRealFirebase && db) {
       const path = `inquiries/${id}`;
@@ -414,15 +429,15 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.UPDATE, path);
       }
-    } else {
-      const updatedList = inquiries.map(i => i.id === id ? updatedInquiry : i);
-      localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
-      setInquiries(updatedList);
     }
   };
 
   // Delete Inquiry
   const deleteInquiry = async (id: string) => {
+    const updatedList = inquiries.filter(i => i.id !== id);
+    setInquiries(updatedList);
+    localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
+
     if (isRealFirebase && db) {
       const path = `inquiries/${id}`;
       try {
@@ -430,10 +445,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (error) {
         handleFirestoreError(error, OperationType.DELETE, path);
       }
-    } else {
-      const updatedList = inquiries.filter(i => i.id !== id);
-      localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
-      setInquiries(updatedList);
     }
   };
 

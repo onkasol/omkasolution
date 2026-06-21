@@ -11,10 +11,11 @@ let isRealFirebase = false;
 try {
   if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== 'placeholder-api-key') {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-    db = getFirestore(app);
+    const dbId = (firebaseConfig as any).firestoreDatabaseId;
+    db = dbId ? getFirestore(app, dbId) : getFirestore(app);
     auth = getAuth(app);
     isRealFirebase = true;
-    console.log('Firebase successfully initialized in production/cloud mode.');
+    console.log(`Firebase successfully initialized in production/cloud mode. Database ID: ${dbId || '(default)'}`);
   } else {
     console.warn('Firebase initialized in fallback/offline mode (using placeholder config).');
   }
