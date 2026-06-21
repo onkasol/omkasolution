@@ -12,11 +12,16 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
   const { settings, isAdminMode, setIsAdminMode, currentUser, isAdminPath, hasPinUnlocked } = useCMS();
 
   const handleAdminToggle = () => {
-    if (currentUser) {
-      setIsAdminMode(!isAdminMode);
+    if (isAdminMode) {
+      setIsAdminMode(false);
+      // Clear admin path/hash to navigate to normal homepage
+      window.location.hash = '';
+      window.history.pushState(null, '', '/');
+      window.dispatchEvent(new Event('hashchange'));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      handleLogin();
+      setIsAdminMode(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -26,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
       setIsAdminMode(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
-      alert('로그인에 실패했습니다. 관리자 모드로 우선 전환합니다.');
+      console.warn('Google Sign-in failed or cancelled. Proceeding in passcode-only mode.');
       setIsAdminMode(true);
     }
   };
@@ -58,7 +63,16 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-black/85 border-b border-white/5 backdrop-blur-md h-20 flex items-center">
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo and Brand Title */}
-        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => { setIsAdminMode(false); onNavigate('hero'); }}>
+        <div 
+          className="flex items-center space-x-3 cursor-pointer" 
+          onClick={() => { 
+            setIsAdminMode(false); 
+            window.location.hash = '';
+            window.history.pushState(null, '', '/');
+            window.dispatchEvent(new Event('hashchange'));
+            onNavigate('hero'); 
+          }}
+        >
           <div 
             className="w-10 h-10 rounded-xl flex items-center justify-center relative overflow-hidden"
             style={{ 

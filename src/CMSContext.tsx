@@ -254,6 +254,8 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Update site-wide CMS settings
   const updateSettings = async (newSettings: SiteSettings) => {
+    // Update local state immediately for instant feedback
+    setSettings(newSettings);
     if (isRealFirebase && db) {
       const path = 'settings/site_config';
       try {
@@ -263,7 +265,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     } else {
       localStorage.setItem('onka_cms_settings', JSON.stringify(newSettings));
-      setSettings(newSettings);
     }
   };
 

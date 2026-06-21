@@ -2,116 +2,23 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // 1. Global Catch-All Safety Net (Default Deny)
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
-    // 2. Global Helpers
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-
-    function incoming() {
-      return request.resource.data;
-    }
-
-    function existing() {
-      return resource.data;
-    }
-
-    // 3. Entity-Specific Input Validations (The Anti-Update-Gap)
-    
-    // SITE SETTINGS VALIDATOR
-    function isValidSiteSettings(data) {
-      return data.keys().hasAll(['title', 'heroTitle', 'accentColor'])
-        && data.title is string && data.title.size() <= 100
-        && data.heroTitle is string && data.heroTitle.size() <= 200
-        && (data.accentColor is string && data.accentColor.size() <= 10 && data.accentColor.matches('^#[A-Fa-f0-9]{3,8}$'))
-        && (!data.keys().contains('subtitle') || (data.subtitle is string && data.subtitle.size() <= 200))
-        && (!data.keys().contains('heroSubtitle') || (data.heroSubtitle is string && data.heroSubtitle.size() <= 500))
-        && (!data.keys().contains('heroCtaText') || (data.heroCtaText is string && data.heroCtaText.size() <= 50))
-        && (!data.keys().contains('fontStyle') || (data.fontStyle is string && data.fontStyle.size() <= 30))
-        && (!data.keys().contains('email') || (data.email is string && data.email.size() <= 100))
-        && (!data.keys().contains('phone') || (data.phone is string && data.phone.size() <= 50))
-        && (!data.keys().contains('address') || (data.address is string && data.address.size() <= 200))
-        && (!data.keys().contains('kakaoLink') || (data.kakaoLink is string && data.kakaoLink.size() <= 300))
-        && (!data.keys().contains('instagramLink') || (data.instagramLink is string && data.instagramLink.size() <= 300));
-    }
-
-    // PORTFOLIO VALIDATOR
-    function isValidPortfolioItem(data) {
-      return data.keys().hasAll(['id', 'title', 'category', 'description', 'imageUrl'])
-        && isValidId(data.id)
-        && data.title is string && data.title.size() <= 100
-        && data.category is string && (data.category == '로고 디자인' || data.category == '광고/PR' || data.category == '종합 브랜딩')
-        && data.description is string && data.description.size() <= 1500
-        && data.imageUrl is string && data.imageUrl.size() <= 500
-        && (!data.keys().contains('clientName') || (data.clientName is string && data.clientName.size() <= 100))
-        && (!data.keys().contains('createdAt') || (data.createdAt is string && data.createdAt.size() <= 50));
-    }
-
-    // BLOG POST VALIDATOR
-    function isValidBlogPost(data) {
-      return data.keys().hasAll(['id', 'title', 'category', 'content', 'summary'])
-        && isValidId(data.id)
-        && data.title is string && data.title.size() <= 150
-        && data.category is string && (data.category == '공지사항' || data.category == '디자인 트렌드' || data.category == '홍보 칼럼')
-        && data.content is string && data.content.size() <= 10000
-        && data.summary is string && data.summary.size() <= 300
-        && (!data.keys().contains('author') || (data.author is string && data.author.size() <= 50))
-        && (!data.keys().contains('imageUrl') || (data.imageUrl is string && data.imageUrl.size() <= 500))
-        && (!data.keys().contains('createdAt') || (data.createdAt is string && data.createdAt.size() <= 50));
-    }
-
-    // CONTACT INQUIRY VALIDATOR
-    function isValidContactInquiry(data) {
-      return data.keys().hasAll(['id', 'name', 'email', 'phone', 'message', 'status'])
-        && isValidId(data.id)
-        && data.name is string && data.name.size() <= 50
-        && data.email is string && data.email.size() <= 100
-        && data.phone is string && data.phone.size() <= 50
-        && data.message is string && data.message.size() <= 2000
-        && data.status is string && (data.status == 'unread' || data.status == 'read' || data.status == 'replied')
-        && (!data.keys().contains('serviceCategory') || (data.serviceCategory is string && data.serviceCategory.size() <= 50))
-        && (!data.keys().contains('createdAt') || (data.createdAt is string && data.createdAt.size() <= 50));
-    }
-
-    // 4. Collection Access Control Rules
-    
-    // Site Settings Selection
+    // Allow read/write for settings, portfolio, blog, and inquiries
     match /settings/{settingsId} {
-      allow read: if true;
-      allow create, update: if isValidSiteSettings(incoming()) && isValidId(settingsId);
-      allow delete: if true;
+      allow read, write: if true;
     }
 
-    // Portfolio Items
     match /portfolio/{itemId} {
-      allow read: if true;
-      allow create: if isValidPortfolioItem(incoming()) && isValidId(itemId);
-      allow update: if isValidPortfolioItem(incoming()) && isValidId(itemId);
-      allow delete: if true;
+      allow read, write: if true;
     }
 
-    // Blog Posts
     match /blog/{postId} {
-      allow read: if true;
-      allow create: if isValidBlogPost(incoming()) && isValidId(postId);
-      allow update: if isValidBlogPost(incoming()) && isValidId(postId);
-      allow delete: if true;
+      allow read, write: if true;
     }
 
-    // Contact Inquiries
     match /inquiries/{inquiryId} {
-      allow read: if true;
-      allow create: if isValidContactInquiry(incoming()) && isValidId(inquiryId);
-      allow update: if isValidContactInquiry(incoming()) && isValidId(inquiryId);
-      allow delete: if true;
+      allow read, write: if true;
     }
+  }
+}
   }
 }
