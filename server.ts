@@ -3,9 +3,34 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
+import fs from 'fs';
 
 // Load environment variables
 dotenv.config();
+
+// File-based db paths
+const DATA_FILE = path.join(process.cwd(), 'cms_data.json');
+
+function getCmsFile() {
+  if (!fs.existsSync(DATA_FILE)) {
+    return null;
+  }
+  try {
+    const content = fs.readFileSync(DATA_FILE, 'utf-8');
+    return JSON.parse(content);
+  } catch (err) {
+    console.error('Error reading CMS JSON file:', err);
+    return null;
+  }
+}
+
+function saveCmsFile(data: any) {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error writing CMS JSON file:', err);
+  }
+}
 
 // Lazy initialize Gemini AI client to prevent crash if key is missing
 let aiClient: any = null;
@@ -26,6 +51,70 @@ async function startServer() {
   // Body Parsing Middlewares
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  // CMS Sync Endpoints
+  app.get('/api/cms/data', (req, res) => {
+    const data = getCmsFile();
+    res.json(data || { settings: null, portfolio: null, blog: null, inquiries: null });
+  });
+
+  app.post('/api/cms/initialize', (req, res) => {
+    const { settings, portfolio, blog, inquiries } = req.body;
+    const current = getCmsFile() || {};
+    
+    const updated = {
+      settings: current.settings || settings,
+      portfolio: current.portfolio || portfolio,
+      blog: current.blog || blog,
+      inquiries: current.inquiries || inquiries
+    };
+    
+    saveCmsFile(updated);
+    res.json({ success: true, message: 'Initialized successfully' });
+  });
+
+  app.post('/api/cms/settings', (req, res) => {
+    const settings = req.body;
+    const current = getCmsFile() || { portfolio: [], blog: [], inquiries: [] };
+    current.settings = settings;
+    saveCmsFile(current);
+    res.json({ success: true, settings });
+  });
+
+  app.post('/api/cms/portfolio', (req, res) => {
+    const portfolio = req.body;
+    const current = getCmsFile() || { settings: null, blog: [], inquiries: [] };
+    current.portfolio = portfolio;
+    saveCmsFile(current);
+    res.json({ success: true, portfolio });
+  });
+
+  app.post('/api/cms/blog', (req, res) => {
+    const blog = req.body;
+    const current = getCmsFile() || { settings: null, portfolio: [], inquiries: [] };
+    current.blog = blog;
+    saveCmsFile(current);
+    res.json({ success: true, blog });
+  });
+
+  app.post('/api/cms/inquiries', (req, res) => {
+    const inquiries = req.body;
+    const current = getCmsFile() || { settings: null, portfolio: [], blog: [] };
+    current.inquiries = inquiries;
+    saveCmsFile(current);
+    res.json({ success: true, inquiries });
+  });
+
+  app.post('/api/cms/reset', (req, res) => {
+    if (fs.existsSync(DATA_FILE)) {
+      try {
+        fs.unlinkSync(DATA_FILE);
+      } catch (err) {
+        console.error('Error deleting CMS JSON file:', err);
+      }
+    }
+    res.json({ success: true, message: 'Reset completed on server' });
+  });
 
   // API Route: AI Logo & Concept Brainstormer proxy via server-side Gemini Flash
   app.post('/api/logobrainstorm', async (req, res) => {

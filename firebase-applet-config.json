@@ -1,9 +1,10 @@
 {
-  "apiKey": "placeholder-api-key",
-  "authDomain": "placeholder.firebaseapp.com",
-  "projectId": "placeholder-project-id",
-  "storageBucket": "placeholder.appspot.com",
-  "messagingSenderId": "000000000000",
-  "appId": "1:000000000000:web:0000000000000000000000",
-  "firestoreDatabaseId": "(default)"
+  "projectId": "pioneering-pottery-cb2z8",
+  "appId": "1:223794757092:web:8875dbea81fc5491c9dbf1",
+  "apiKey": "AIzaSyCtGHoX0Usvz2zkVoe-Av5QakLJAoY8FSY",
+  "authDomain": "pioneering-pottery-cb2z8.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-5793a667-1235-46e0-a480-0b7272030136",
+  "storageBucket": "pioneering-pottery-cb2z8.firebasestorage.app",
+  "messagingSenderId": "223794757092",
+  "measurementId": ""
 }
