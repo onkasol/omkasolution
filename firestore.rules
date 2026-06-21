@@ -86,32 +86,32 @@ service cloud.firestore {
     // Site Settings Selection
     match /settings/{settingsId} {
       allow read: if true;
-      allow create, update: if isSignedIn() && isValidSiteSettings(incoming()) && isValidId(settingsId);
-      allow delete: if isSignedIn();
+      allow create, update: if isValidSiteSettings(incoming()) && isValidId(settingsId);
+      allow delete: if true;
     }
 
     // Portfolio Items
     match /portfolio/{itemId} {
       allow read: if true;
-      allow create: if isSignedIn() && isValidPortfolioItem(incoming()) && isValidId(itemId);
-      allow update: if isSignedIn() && isValidPortfolioItem(incoming()) && isValidId(itemId);
-      allow delete: if isSignedIn();
+      allow create: if isValidPortfolioItem(incoming()) && isValidId(itemId);
+      allow update: if isValidPortfolioItem(incoming()) && isValidId(itemId);
+      allow delete: if true;
     }
 
     // Blog Posts
     match /blog/{postId} {
       allow read: if true;
-      allow create: if isSignedIn() && isValidBlogPost(incoming()) && isValidId(postId);
-      allow update: if isSignedIn() && isValidBlogPost(incoming()) && isValidId(postId);
-      allow delete: if isSignedIn();
+      allow create: if isValidBlogPost(incoming()) && isValidId(postId);
+      allow update: if isValidBlogPost(incoming()) && isValidId(postId);
+      allow delete: if true;
     }
 
     // Contact Inquiries
     match /inquiries/{inquiryId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow create: if isValidContactInquiry(incoming()) && isValidId(inquiryId);
-      allow update: if isSignedIn() && isValidContactInquiry(incoming()) && isValidId(inquiryId);
-      allow delete: if isSignedIn();
+      allow update: if isValidContactInquiry(incoming()) && isValidId(inquiryId);
+      allow delete: if true;
     }
   }
 }

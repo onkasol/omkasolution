@@ -136,9 +136,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               contactDesc: loaded.contactDesc || defaultSettings.contactDesc,
               contactCategories: loaded.contactCategories || defaultSettings.contactCategories
             };
+            setSettings(migrated);
             setDoc(doc(db, 'settings', 'site_config'), migrated)
-              .then(() => setSettings(migrated))
-              .catch(() => setSettings(loaded));
+              .catch(err => console.error('Error writing migrated settings to Firestore:', err));
           } else {
             setSettings(loaded);
           }
@@ -437,12 +437,33 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Reset to default CMS presets
-  const triggerReset = () => {
+  const triggerReset = async () => {
     if (window.confirm('모든 데이터를 최초의 웅장한 루비솔루션 기본 테마 데이터로 온전히 복구하시겠습니까? (이 작업은 되돌릴 수 없습니다)')) {
       if (isRealFirebase && db) {
-        setDoc(doc(db, 'settings', 'site_config'), defaultSettings)
-          .catch(e => console.error(e));
-        alert('클라우드 DB 리셋이 전송되었습니다. 페이지를 새로고침 해보세요.');
+        try {
+          // Overwrite Settings
+          await setDoc(doc(db, 'settings', 'site_config'), defaultSettings);
+          
+          // Overwrite Portfolio items
+          for (const item of defaultPortfolio) {
+            await setDoc(doc(db, 'portfolio', item.id), item);
+          }
+
+          // Overwrite Blog posts
+          for (const post of defaultBlog) {
+            await setDoc(doc(db, 'blog', post.id), post);
+          }
+
+          // Overwrite Inquiries
+          for (const inq of defaultInquiries) {
+            await setDoc(doc(db, 'inquiries', inq.id), inq);
+          }
+
+          alert('클라우드 DB에 모든 루비 에센셜 데이터 복구가 완료되었습니다!');
+        } catch (e) {
+          console.error(e);
+          alert('데이터 복구 중 오류가 발생했습니다: ' + (e instanceof Error ? e.message : String(e)));
+        }
       } else {
         localStorage.setItem('onka_cms_settings', JSON.stringify(defaultSettings));
         localStorage.setItem('onka_cms_portfolio', JSON.stringify(defaultPortfolio));
