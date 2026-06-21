@@ -7,10 +7,11 @@ import { PortfolioList } from './components/PortfolioList';
 import { BlogSection } from './components/BlogSection';
 import { ContactForm } from './components/ContactForm';
 import { AdminDashboard } from './components/AdminDashboard';
+import { AdminPasscode } from './components/AdminPasscode';
 import { Gem, Mail, Phone, MapPin, ExternalLink, ShieldCheck } from 'lucide-react';
 
 function AppContent() {
-  const { settings, isAdminMode, setIsAdminMode } = useCMS();
+  const { settings, isAdminMode, setIsAdminMode, isAdminPath, hasPinUnlocked } = useCMS();
   const [activeSection, setActiveSection] = useState('hero');
 
   // Dynamically update document title based on CMS Settings
@@ -64,6 +65,15 @@ function AppContent() {
       default: return 'font-sans';
     }
   };
+
+  // Render Admin Passcode Screen if attempting to access /admin and not unlocked
+  if (isAdminPath && !hasPinUnlocked) {
+    return (
+      <div className={`min-h-screen bg-black text-white selection:bg-purple-500/30 selection:text-white ${getFontClass()}`}>
+        <AdminPasscode />
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen bg-black text-white selection:bg-purple-500/30 selection:text-white ${getFontClass()}`}>
@@ -124,7 +134,6 @@ function AppContent() {
               <button onClick={() => scrollToSection('portfolio')} className="text-left py-1 hover:text-white transition-colors cursor-pointer">포트폴리오</button>
               <button onClick={() => scrollToSection('blog')} className="text-left py-1 hover:text-white transition-colors cursor-pointer">소식/칼럼</button>
               <button onClick={() => scrollToSection('contact')} className="text-left py-1 hover:text-white transition-colors cursor-pointer text-purple-300 font-bold" style={{ color: settings.accentColor }}>의뢰 접수</button>
-              <button onClick={() => setIsAdminMode(true)} className="text-left py-1 hover:text-white transition-colors cursor-pointer font-bold">CMS 대시보드</button>
             </div>
           </div>
 

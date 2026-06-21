@@ -22,6 +22,9 @@ interface CMSContextType {
   setIsAdminMode: (mode: boolean) => void;
   currentUser: any;
   loading: boolean;
+  isAdminPath: boolean;
+  hasPinUnlocked: boolean;
+  setHasPinUnlocked: (unlocked: boolean) => void;
   updateSettings: (newSettings: SiteSettings) => Promise<void>;
   addPortfolioItem: (item: Omit<PortfolioItem, 'createdAt'>) => Promise<void>;
   updatePortfolioItem: (item: PortfolioItem) => Promise<void>;
@@ -45,6 +48,44 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Path / routing detection for admin
+  const [isAdminPath, setIsAdminPath] = useState<boolean>(() => {
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+    return path === '/admin' || path.endsWith('/admin') || hash === '#/admin' || hash === '#admin';
+  });
+
+  const [hasPinUnlocked, setHasPinUnlocked] = useState<boolean>(() => {
+    return sessionStorage.getItem('ruby_admin_unlocked') === 'true';
+  });
+
+  // Automatically monitor and sync URL updates for Hidden Admin access
+  useEffect(() => {
+    const checkPath = () => {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      const onAdmin = path === '/admin' || path.endsWith('/admin') || hash === '#/admin' || hash === '#admin';
+      setIsAdminPath(onAdmin);
+
+      // Force admin mode based on authentication and URL matching
+      const unlocked = sessionStorage.getItem('ruby_admin_unlocked') === 'true';
+      if (onAdmin && unlocked) {
+        setIsAdminMode(true);
+      } else if (!onAdmin) {
+        setIsAdminMode(false);
+      }
+    };
+
+    checkPath();
+
+    window.addEventListener('popstate', checkPath);
+    window.addEventListener('hashchange', checkPath);
+    return () => {
+      window.removeEventListener('popstate', checkPath);
+      window.removeEventListener('hashchange', checkPath);
+    };
+  }, []);
 
   // Authentication monitoring
   useEffect(() => {
@@ -430,6 +471,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsAdminMode,
       currentUser,
       loading,
+      isAdminPath,
+      hasPinUnlocked,
+      setHasPinUnlocked,
       updateSettings,
       addPortfolioItem,
       updatePortfolioItem,

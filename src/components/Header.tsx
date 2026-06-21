@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
-  const { settings, isAdminMode, setIsAdminMode, currentUser } = useCMS();
+  const { settings, isAdminMode, setIsAdminMode, currentUser, isAdminPath, hasPinUnlocked } = useCMS();
 
   const handleAdminToggle = () => {
     if (currentUser) {
@@ -34,7 +34,12 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
   const handleLogout = async () => {
     try {
       await logout();
+      sessionStorage.removeItem('ruby_admin_unlocked');
       setIsAdminMode(false);
+      // Redirect to home root
+      window.location.hash = '';
+      window.history.pushState(null, '', '/');
+      window.dispatchEvent(new Event('hashchange'));
     } catch (err) {
       console.error(err);
     }
@@ -76,53 +81,55 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
         </div>
 
         {/* Real-time CMS Admin Control Widgets */}
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={handleAdminToggle}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              isAdminMode 
-                ? 'bg-white text-black hover:bg-gray-100' 
-                : 'text-white border border-white/10 hover:border-white/30 hover:bg-white/5'
-            }`}
-            style={isAdminMode ? {} : { 
-              boxShadow: `0 0 10px ${settings.accentColor}1A`
-            }}
-          >
-            {isAdminMode ? (
-              <>
-                <Globe className="w-3.5 h-3.5" />
-                <span>홈페이지로 가기</span>
-              </>
-            ) : (
-              <>
-                <LayoutDashboard className="w-3.5 h-3.5" style={{ color: settings.accentColor }} />
-                <span>CMS 관리자 모드</span>
-              </>
-            )}
-          </button>
+        {isAdminPath && hasPinUnlocked && (
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={handleAdminToggle}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                isAdminMode 
+                  ? 'bg-white text-black hover:bg-gray-100' 
+                  : 'text-white border border-white/10 hover:border-white/30 hover:bg-white/5'
+              }`}
+              style={isAdminMode ? {} : { 
+                boxShadow: `0 0 10px ${settings.accentColor}1A`
+              }}
+            >
+              {isAdminMode ? (
+                <>
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>홈페이지로 가기</span>
+                </>
+              ) : (
+                <>
+                  <LayoutDashboard className="w-3.5 h-3.5" style={{ color: settings.accentColor }} />
+                  <span>CMS 관리자 모드</span>
+                </>
+              )}
+            </button>
 
-          {currentUser && (
-            <div className="flex items-center space-x-3 border-l border-white/10 pl-4">
-              <div className="flex items-center space-x-2">
-                <img 
-                  src={currentUser.photoURL || "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=50&h=50&fit=crop"} 
-                  alt="Admin" 
-                  className="w-7 h-7 rounded-full border border-white/20"
-                />
-                <span className="text-xs text-gray-300 font-medium hidden sm:inline-block">
-                  {currentUser.displayName || '관리자'}
-                </span>
+            {currentUser && (
+              <div className="flex items-center space-x-3 border-l border-white/10 pl-4">
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src={currentUser.photoURL || "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=50&h=50&fit=crop"} 
+                    alt="Admin" 
+                    className="w-7 h-7 rounded-full border border-white/20"
+                  />
+                  <span className="text-xs text-gray-300 font-medium hidden sm:inline-block">
+                    {currentUser.displayName || '관리자'}
+                  </span>
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
+                  title="로그아웃"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
               </div>
-              <button 
-                onClick={handleLogout}
-                className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
-                title="로그아웃"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
