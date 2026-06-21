@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             <span 
               className={`text-lg font-bold tracking-wider text-white ${getFontClass()}`}
             >
-              루비솔루션
+              {settings.title || '루비솔루션'}
             </span>
             <span className="text-[10px] text-gray-400 font-mono tracking-widest uppercase">
               {settings.subtitle || 'RUBY SOLUTION'}

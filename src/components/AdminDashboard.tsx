@@ -42,7 +42,8 @@ export const AdminDashboard: React.FC = () => {
     triggerReset
   } = useCMS();
 
-  const [activeTab, setActiveTab] = useState<'settings' | 'portfolio' | 'blog' | 'inquiries' | 'footer' | 'ai-helper'>('settings');
+  const [activeTab, setActiveTab] = useState<'settings' | 'portfolio' | 'blog' | 'inquiries' | 'footer' | 'ai-helper' | 'mobile-preview'>('settings');
+  const [iframeRefKey, setIframeRefKey] = useState<number>(0);
 
   // Site Settings Form state
   const [formSettings, setFormSettings] = useState<SiteSettings>(settings);
@@ -124,6 +125,7 @@ export const AdminDashboard: React.FC = () => {
     } else {
       await addPortfolioItem(payload);
     }
+    setIframeRefKey(prev => prev + 1);
     setOpenPortfolioModal(false);
   };
 
@@ -174,6 +176,7 @@ export const AdminDashboard: React.FC = () => {
     } else {
       await addBlogPost(payload);
     }
+    setIframeRefKey(prev => prev + 1);
     setOpenBlogModal(false);
   };
 
@@ -181,6 +184,7 @@ export const AdminDashboard: React.FC = () => {
   const handleSettingsSave = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateSettings(formSettings);
+    setIframeRefKey(prev => prev + 1);
     alert('CMS 웹사이트 설정값이 정상 변경되었습니다. 전체 레이아웃이 실시간 갱신됩니다!');
   };
 
@@ -317,6 +321,18 @@ export const AdminDashboard: React.FC = () => {
           >
             <Gem className="w-4 h-4 text-purple-400" />
             <span>루비 AI 로고 브레인스토머</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('mobile-preview')}
+            className={`flex items-center space-x-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer border border-sky-500/20 ${
+              activeTab === 'mobile-preview' ? 'bg-sky-500/10 text-sky-400 border-sky-500' : 'text-gray-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <svg className="w-4 h-4 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <span>📱 실시간 모바일 미리보기</span>
           </button>
         </div>
 
@@ -1431,6 +1447,152 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               </div>
             </form>
+          )}
+
+          {/* TAB 7: MOBILE LIVE PREVIEW DEVICE SIMULATOR */}
+          {activeTab === 'mobile-preview' && (
+            <div className="space-y-6">
+              <div className="border-b border-white/5 pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold flex items-center space-x-2">
+                      <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      <span>📱 실시간 모바일 디바이스 미리보기 (Simulator)</span>
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      CMS 설정 및 포트폴리오/컬럼 수정 사항이 실시간으로 모바일 단말 프레임에 반응형 최적화 표출되는지 시뮬레이트합니다.
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <button
+                      type="button"
+                      onClick={() => setIframeRefKey(prev => prev + 1)}
+                      className="flex items-center space-x-1.5 px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-xs font-semibold cursor-pointer transition-all active:scale-95"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>기기 화면 동기화</span>
+                    </button>
+                    <a
+                      href="/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-1.5 px-4 py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 rounded-xl text-xs font-semibold cursor-pointer transition-all"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>새 탭으로 열기</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                {/* Visual simulator guide & instructions */}
+                <div className="lg:col-span-5 space-y-6">
+                  <div className="bg-gradient-to-br from-zinc-950 to-purple-950/20 border border-white/5 rounded-3xl p-6 space-y-5">
+                    <span className="text-[10px] uppercase font-mono tracking-widest text-sky-400 font-bold block">RUBY SIMULATOR v2.1</span>
+                    <h4 className="text-sm font-bold text-white leading-normal">모바일 뷰어 즉각 싱크 가이드</h4>
+                    
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      현재 사이트는 <strong>로컬 스토리지 데이터셋</strong>을 기반으로 동작 중입니다. 만약 <u>PC에서 수정한 데이터가 다른 다른 물리적 모바일 폰</u>에서도 즉시 보여지게 하려면, 에디터 화면의 <strong>우측 혹은 상단 Firebase 연동</strong>을 체결하시면 됩니다.
+                    </p>
+
+                    <div className="space-y-3.5 pt-2 text-xs">
+                      <div className="flex items-start space-x-2.5">
+                        <span className="w-5 h-5 rounded-md bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">1</span>
+                        <p className="text-gray-400">오른쪽 스마트폰 화면은 실제 모바일 스크린 환경의 해상도를 100% 가상 시뮬레이트한 프레임입니다.</p>
+                      </div>
+                      <div className="flex items-start space-x-2.5">
+                        <span className="w-5 h-5 rounded-md bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">2</span>
+                        <p className="text-gray-400">상단 <strong>"기본 설정"</strong>, <strong>"포트폴리오"</strong>, <strong>"글/공지사항"</strong> 에서 저장 버튼을 누를 때마다, 오른쪽 단말 미리보기가 자동으로 리스타트되어 반영 상을 표시해 줍니다.</p>
+                      </div>
+                      <div className="flex items-start space-x-2.5">
+                        <span className="w-5 h-5 rounded-md bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">3</span>
+                        <p className="text-gray-400">모바일에 맞게 로고, 헤드라인, 글꼴 테마, 그리고 포트폴리오 카드 그리드가 한 줄로 깔끔이 자동 조율되는 레이아웃을 스크롤 해보실 수 있습니다.</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/5 space-y-3">
+                      <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 block">선택 가상 디바이스</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button type="button" className="px-3 py-2 bg-sky-500/10 border border-sky-500/40 text-sky-400 text-xs rounded-xl font-bold flex items-center justify-center space-x-1.5 cursor-pointer">
+                          <span>iPhone 15 Pro (Compact)</span>
+                        </button>
+                        <button type="button" className="px-3 py-2 bg-white/5 border border-white/5 text-gray-400 hover:text-white text-xs rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer">
+                          <span>Galaxy Ultra (Fluid)</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-sky-500/5 border border-sky-500/10 rounded-2xl p-4 text-[11px] text-sky-300 leading-normal">
+                    📌 <strong>팁:</strong> 모바일 뷰어 내부에서도 문의 작성(의뢰접수), 텔레그램 연동, 퀵 네비게이션 앵커 서핑이 손가락 터치 제스처처럼 드래그/스크롤하여 정밀 가동됩니다!
+                  </div>
+                </div>
+
+                {/* Device simulator Bezel Frame on the right */}
+                <div className="lg:col-span-7 flex justify-center py-4">
+                  
+                  {/* Smartphone outer body casing */}
+                  <div className="relative mx-auto w-[360px] h-[720px] rounded-[52px] border-[12px] border-zinc-800 bg-black shadow-[0_30px_60px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden ring-4 ring-zinc-700/20">
+                    
+                    {/* Metal premium volume & lock line decorations */}
+                    <div className="absolute top-[100px] left-[-12px] w-1 h-12 bg-zinc-600 rounded-r-sm z-30" />
+                    <div className="absolute top-[150px] left-[-12px] w-1.2 h-14 bg-zinc-600 rounded-r-sm z-30" />
+                    <div className="absolute top-[120px] right-[-12px] w-1.2 h-16 bg-zinc-600 rounded-l-sm z-30" />
+
+                    {/* Camera notch / island mock */}
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-zinc-800 rounded-b-2xl z-40 flex items-center justify-center shadow-inner">
+                      <div className="w-12 h-2.5 bg-black rounded-full mr-2.5 flex items-center justify-end pr-1">
+                        <div className="w-1 h-1 bg-sky-900 rounded-full animate-pulse" />
+                      </div>
+                      <div className="w-3.5 h-3.5 bg-zinc-900 rounded-full border border-zinc-950 flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 bg-blue-950/80 rounded-full flex items-center justify-center">
+                          <div className="w-0.5 h-0.5 bg-cyan-400 rounded-full" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Device Status bar */}
+                    <div className="h-8 bg-black/95 px-6 pt-1 flex justify-between items-center text-[10px] text-gray-400 font-mono z-30 shrink-0 select-none border-b border-white/5 animate-none">
+                      <span className="font-semibold text-[9.5px]">RubySim 5G</span>
+                      <span className="text-[10px] pl-3">12:12</span>
+                      <div className="flex items-center space-x-1.5">
+                        {/* Wifi icon */}
+                        <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a9.9 9.9 0 0114.14 0M1.414 7.5a15 15 0 0121.172 0" />
+                        </svg>
+                        {/* Battery mock */}
+                        <div className="w-5 h-2.5 border border-gray-400 rounded-sm p-0.5 flex items-center">
+                          <div className="w-3 h-1.2 bg-emerald-500 rounded-3xs" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* IFrame Viewport serving live webpage */}
+                    <div className="flex-1 w-full relative z-10 bg-black">
+                      <iframe 
+                        key={iframeRefKey}
+                        src={window.location.origin + "/"}
+                        title="RubySolution Mobile Sim"
+                        className="w-full h-full border-none bg-black"
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+
+                    {/* Home indicator bar at bottom */}
+                    <div className="h-6 bg-black flex items-center justify-center pb-2 shrink-0 z-30 select-none font-sans">
+                      <div className="w-32 h-1 bg-white/30 rounded-full" />
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
           )}
 
         </div>
