@@ -334,6 +334,7 @@ export const AdminDashboard: React.FC = () => {
             </svg>
             <span>📱 실시간 모바일 미리보기</span>
           </button>
+
         </div>
 
         {/* Tab Contents Panels */}
@@ -1496,7 +1497,7 @@ export const AdminDashboard: React.FC = () => {
                     <h4 className="text-sm font-bold text-white leading-normal">모바일 뷰어 즉각 싱크 가이드</h4>
                     
                     <p className="text-xs text-gray-400 leading-relaxed">
-                      현재 사이트는 <strong>로컬 스토리지 데이터셋</strong>을 기반으로 동작 중입니다. 만약 <u>PC에서 수정한 데이터가 다른 다른 물리적 모바일 폰</u>에서도 즉시 보여지게 하려면, 에디터 화면의 <strong>우측 혹은 상단 Firebase 연동</strong>을 체결하시면 됩니다.
+                      현재 사이트는 <strong>실시간 클라우드 DB</strong>를 기반으로 동작 중입니다. PC와 모바일 디바이스 간에 실시간으로 데이터가 물 흐르듯 동기화됩니다!
                     </p>
 
                     <div className="space-y-3.5 pt-2 text-xs">

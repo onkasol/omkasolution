@@ -212,72 +212,43 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         unsubInquiries();
       };
     } else {
-      // Server-Side CMS API Fallback Mode (Synchronized across all devices in real-time)
-      let intervalId: any = null;
+      // Local Storage Fallback Mode
+      console.log('Restoring CMS data from LocalStorage...');
       
-      const fetchServerData = async (isInitial = false) => {
-        try {
-          const res = await fetch('/api/cms/data');
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.settings) {
-              setSettings(prev => JSON.stringify(prev) === JSON.stringify(data.settings) ? prev : data.settings);
-              setPortfolio(prev => JSON.stringify(prev) === JSON.stringify(data.portfolio || []) ? prev : (data.portfolio || []));
-              setBlog(prev => JSON.stringify(prev) === JSON.stringify(data.blog || []) ? prev : (data.blog || []));
-              setInquiries(prev => JSON.stringify(prev) === JSON.stringify(data.inquiries || []) ? prev : (data.inquiries || []));
+      const storedSettings = localStorage.getItem('onka_cms_settings');
+      const storedPortfolio = localStorage.getItem('onka_cms_portfolio');
+      const storedBlog = localStorage.getItem('onka_cms_blog');
+      const storedInquiries = localStorage.getItem('onka_cms_inquiries');
 
-              localStorage.setItem('onka_cms_settings', JSON.stringify(data.settings));
-              localStorage.setItem('onka_cms_portfolio', JSON.stringify(data.portfolio || []));
-              localStorage.setItem('onka_cms_blog', JSON.stringify(data.blog || []));
-              localStorage.setItem('onka_cms_inquiries', JSON.stringify(data.inquiries || []));
-            } else if (isInitial) {
-              // Server has no data yet, initialize it!
-              const initialData = {
-                settings: defaultSettings,
-                portfolio: defaultPortfolio,
-                blog: defaultBlog,
-                inquiries: defaultInquiries
-              };
-              await fetch('/api/cms/initialize', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(initialData)
-              });
-              setSettings(defaultSettings);
-              setPortfolio(defaultPortfolio);
-              setBlog(defaultBlog);
-              setInquiries(defaultInquiries);
-            }
-          }
-        } catch (error) {
-          console.warn('Could not sync with local server API. Using standalone localStorage backup.', error);
-          if (isInitial) {
-            const storedSettings = localStorage.getItem('onka_cms_settings');
-            const storedPortfolio = localStorage.getItem('onka_cms_portfolio');
-            const storedBlog = localStorage.getItem('onka_cms_blog');
-            const storedInquiries = localStorage.getItem('onka_cms_inquiries');
-            setSettings(storedSettings ? JSON.parse(storedSettings) : defaultSettings);
-            setPortfolio(storedPortfolio ? JSON.parse(storedPortfolio) : defaultPortfolio);
-            setBlog(storedBlog ? JSON.parse(storedBlog) : defaultBlog);
-            setInquiries(storedInquiries ? JSON.parse(storedInquiries) : defaultInquiries);
-          }
-        } finally {
-          if (isInitial) {
-            setLoading(false);
-          }
-        }
-      };
+      if (storedSettings) {
+        setSettings(JSON.parse(storedSettings));
+      } else {
+        localStorage.setItem('onka_cms_settings', JSON.stringify(defaultSettings));
+        setSettings(defaultSettings);
+      }
 
-      fetchServerData(true);
+      if (storedPortfolio) {
+        setPortfolio(JSON.parse(storedPortfolio));
+      } else {
+        localStorage.setItem('onka_cms_portfolio', JSON.stringify(defaultPortfolio));
+        setPortfolio(defaultPortfolio);
+      }
 
-      // Start 3s polling for cross-device realtime synchronization
-      intervalId = setInterval(() => {
-        fetchServerData(false);
-      }, 3000);
+      if (storedBlog) {
+        setBlog(JSON.parse(storedBlog));
+      } else {
+        localStorage.setItem('onka_cms_blog', JSON.stringify(defaultBlog));
+        setBlog(defaultBlog);
+      }
 
-      return () => {
-        if (intervalId) clearInterval(intervalId);
-      };
+      if (storedInquiries) {
+        setInquiries(JSON.parse(storedInquiries));
+      } else {
+        localStorage.setItem('onka_cms_inquiries', JSON.stringify(defaultInquiries));
+        setInquiries(defaultInquiries);
+      }
+
+      setLoading(false);
     }
   }, []);
 
@@ -293,15 +264,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       localStorage.setItem('onka_cms_settings', JSON.stringify(newSettings));
       setSettings(newSettings);
-      try {
-        await fetch('/api/cms/settings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newSettings)
-        });
-      } catch (err) {
-        console.error('Server settings sync failed:', err);
-      }
     }
   };
 
@@ -324,15 +286,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = [newItem, ...portfolio];
       localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
       setPortfolio(updatedList);
-      try {
-        await fetch('/api/cms/portfolio', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server portfolio sync failed:', err);
-      }
     }
   };
 
@@ -349,15 +302,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = portfolio.map(i => i.id === item.id ? item : i);
       localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
       setPortfolio(updatedList);
-      try {
-        await fetch('/api/cms/portfolio', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server portfolio sync failed:', err);
-      }
     }
   };
 
@@ -374,15 +318,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = portfolio.filter(i => i.id !== id);
       localStorage.setItem('onka_cms_portfolio', JSON.stringify(updatedList));
       setPortfolio(updatedList);
-      try {
-        await fetch('/api/cms/portfolio', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server portfolio sync failed:', err);
-      }
     }
   };
 
@@ -405,15 +340,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = [newPost, ...blog];
       localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
       setBlog(updatedList);
-      try {
-        await fetch('/api/cms/blog', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server blog sync failed:', err);
-      }
     }
   };
 
@@ -430,15 +356,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = blog.map(p => p.id === post.id ? post : p);
       localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
       setBlog(updatedList);
-      try {
-        await fetch('/api/cms/blog', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server blog sync failed:', err);
-      }
     }
   };
 
@@ -455,15 +372,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = blog.filter(p => p.id !== id);
       localStorage.setItem('onka_cms_blog', JSON.stringify(updatedList));
       setBlog(updatedList);
-      try {
-        await fetch('/api/cms/blog', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server blog sync failed:', err);
-      }
     }
   };
 
@@ -488,15 +396,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = [newInquiry, ...inquiries];
       localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
       setInquiries(updatedList);
-      try {
-        await fetch('/api/cms/inquiries', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server inquiries sync failed:', err);
-      }
     }
   };
 
@@ -518,15 +417,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = inquiries.map(i => i.id === id ? updatedInquiry : i);
       localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
       setInquiries(updatedList);
-      try {
-        await fetch('/api/cms/inquiries', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server inquiries sync failed:', err);
-      }
     }
   };
 
@@ -543,15 +433,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedList = inquiries.filter(i => i.id !== id);
       localStorage.setItem('onka_cms_inquiries', JSON.stringify(updatedList));
       setInquiries(updatedList);
-      try {
-        await fetch('/api/cms/inquiries', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedList)
-        });
-      } catch (err) {
-        console.error('Server inquiries sync failed:', err);
-      }
     }
   };
 
@@ -571,9 +452,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setPortfolio(defaultPortfolio);
         setBlog(defaultBlog);
         setInquiries(defaultInquiries);
-        
-        // Reset in server
-        fetch('/api/cms/reset', { method: 'POST' }).catch(err => console.error('Server reset failed:', err));
         alert('로컬 가상 스토리지의 루비 테마 데이터가 즉시 초기화되었습니다!');
       }
     }
