@@ -33,8 +33,8 @@ const compressImage = (file: File): Promise<string> => {
       img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1000;
-        const MAX_HEIGHT = 1000;
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
         let width = img.width;
         let height = img.height;
 
@@ -59,8 +59,34 @@ const compressImage = (file: File): Promise<string> => {
         }
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Convert to quality 0.7 jpeg
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        // Convert to quality 0.6 jpeg (highly optimized size)
+        let dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        
+        // Secondary ultra-compression if still very large
+        if (dataUrl.length > 700000) {
+          const secondCanvas = document.createElement('canvas');
+          let sWidth = width;
+          let sHeight = height;
+          
+          if (sWidth > 500 || sHeight > 500) {
+            if (sWidth > sHeight) {
+              sHeight = (sHeight * 500) / sWidth;
+              sWidth = 500;
+            } else {
+              sWidth = (sWidth * 500) / sHeight;
+              sHeight = 500;
+            }
+          }
+          
+          secondCanvas.width = sWidth;
+          secondCanvas.height = sHeight;
+          const sCtx = secondCanvas.getContext('2d');
+          if (sCtx) {
+            sCtx.drawImage(img, 0, 0, sWidth, sHeight);
+            dataUrl = secondCanvas.toDataURL('image/jpeg', 0.5);
+          }
+        }
+        
         resolve(dataUrl);
       };
       img.onerror = (err) => {
@@ -94,6 +120,7 @@ export const AdminDashboard: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'settings' | 'portfolio' | 'blog' | 'inquiries' | 'footer' | 'ai-helper' | 'mobile-preview'>('settings');
   const [iframeRefKey, setIframeRefKey] = useState<number>(0);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Site Settings Form state
   const [formSettings, setFormSettings] = useState<SiteSettings>(settings);
@@ -170,13 +197,27 @@ export const AdminDashboard: React.FC = () => {
       imageUrl: pImageUrl
     };
 
-    if (editingPortfolio) {
-      await updatePortfolioItem({ ...payload, createdAt: editingPortfolio.createdAt });
-    } else {
-      await addPortfolioItem(payload);
+    setIsSaving(true);
+    try {
+      if (editingPortfolio) {
+        await updatePortfolioItem({ ...payload, createdAt: editingPortfolio.createdAt });
+      } else {
+        await addPortfolioItem(payload);
+      }
+      setIframeRefKey(prev => prev + 1);
+      setOpenPortfolioModal(false);
+      alert('포트폴리오가 정상적으로 저장되었습니다.');
+    } catch (err: any) {
+      console.error(err);
+      const errMsg = err.message || '';
+      if (errMsg.includes('1,048,576') || errMsg.includes('too large') || errMsg.includes('size limit')) {
+        alert('첨부한 이미지 파일의 용량이 너무 큽니다. Firestore 업로드 규격(1MB 이하)를 초과했습니다. 더 작은 사이즈나 더 낮은 화질의 이미지를 업로드해 주세요.');
+      } else {
+        alert('저장에 실패했습니다: ' + (errMsg.substring(0, 150) || '알 수 없는 오류'));
+      }
+    } finally {
+      setIsSaving(false);
     }
-    setIframeRefKey(prev => prev + 1);
-    setOpenPortfolioModal(false);
   };
 
   // Trigger modal for blog edit
@@ -221,21 +262,43 @@ export const AdminDashboard: React.FC = () => {
       imageUrl: bImageUrl
     };
 
-    if (editingBlog) {
-      await updateBlogPost({ ...payload, createdAt: editingBlog.createdAt });
-    } else {
-      await addBlogPost(payload);
+    setIsSaving(true);
+    try {
+      if (editingBlog) {
+        await updateBlogPost({ ...payload, createdAt: editingBlog.createdAt });
+      } else {
+        await addBlogPost(payload);
+      }
+      setIframeRefKey(prev => prev + 1);
+      setOpenBlogModal(false);
+      alert('블로그/공지사항이 성공적으로 배포되었습니다.');
+    } catch (err: any) {
+      console.error(err);
+      const errMsg = err.message || '';
+      if (errMsg.includes('1,048,576') || errMsg.includes('too large') || errMsg.includes('size limit')) {
+        alert('첨부한 이미지 파일의 용량이 너무 큽니다. Firestore 업로드 규격(1MB 이하)를 초과했습니다. 더 작은 사이즈나 더 낮은 화질의 이미지를 업로드해 주세요.');
+      } else {
+        alert('배포에 실패했습니다: ' + (errMsg.substring(0, 150) || '알 수 없는 오류'));
+      }
+    } finally {
+      setIsSaving(false);
     }
-    setIframeRefKey(prev => prev + 1);
-    setOpenBlogModal(false);
   };
 
   // Update Settings handler
   const handleSettingsSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateSettings(formSettings);
-    setIframeRefKey(prev => prev + 1);
-    alert('CMS 웹사이트 설정값이 정상 변경되었습니다. 전체 레이아웃이 실시간 갱신됩니다!');
+    setIsSaving(true);
+    try {
+      await updateSettings(formSettings);
+      setIframeRefKey(prev => prev + 1);
+      alert('CMS 웹사이트 설정값이 정상 변경되었습니다. 전체 레이아웃이 실시간 갱신됩니다!');
+    } catch (err: any) {
+      console.error(err);
+      alert('설정 저장에 실패했습니다: ' + (err.message || '알 수 없는 오류'));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Call server-side Gemini endpoint for logo generation help
@@ -1777,8 +1840,10 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4 border-t border-white/5">
-                  <button type="button" onClick={() => setOpenPortfolioModal(false)} className="px-4 py-2 border border-white/10 text-xs rounded-xl hover:text-white">취소</button>
-                  <button type="submit" className="px-5 py-2 bg-white text-black font-bold text-xs rounded-xl hover:bg-gray-200">저장 제출</button>
+                  <button type="button" disabled={isSaving} onClick={() => setOpenPortfolioModal(false)} className="px-4 py-2 border border-white/10 text-xs rounded-xl hover:text-white disabled:opacity-50">취소</button>
+                  <button type="submit" disabled={isSaving} className="px-5 py-2 bg-white text-black font-bold text-xs rounded-xl hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-1">
+                    {isSaving ? '저장 중...' : '저장 제출'}
+                  </button>
                 </div>
               </form>
             </motion.div>
@@ -1908,8 +1973,10 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4 border-t border-white/5">
-                  <button type="button" onClick={() => setOpenBlogModal(false)} className="px-4 py-2 border border-white/10 text-xs rounded-xl hover:text-white">취소</button>
-                  <button type="submit" className="px-5 py-2 bg-white text-black font-bold text-xs rounded-xl hover:bg-gray-200">배포 시작</button>
+                  <button type="button" disabled={isSaving} onClick={() => setOpenBlogModal(false)} className="px-4 py-2 border border-white/10 text-xs rounded-xl hover:text-white disabled:opacity-50">취소</button>
+                  <button type="submit" disabled={isSaving} className="px-5 py-2 bg-white text-black font-bold text-xs rounded-xl hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-1">
+                    {isSaving ? '배포 중...' : '배포 시작'}
+                  </button>
                 </div>
               </form>
             </motion.div>
